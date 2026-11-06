@@ -1,0 +1,15 @@
+{
+	"name": "politereach-x",
+	"displayName": "PoliteReach for X",
+	"version": "0.1.0",
+	"description": "Run X (Twitter) DM outreach from your own X accounts with Claude: find and research people, stage DM sequences for your approval, answer replies, follow up on agreed calls and schedule tweets. Claude writes and decides; PoliteReach does the sending.",
+	"author": {
+		"name": "PoliteReach",
+		"url": "https://politereach.com"
+	},
+	"homepage": "https://politereach.com",
+	"repository": "https://github.com/RathodDeven/politereach-x-plugin",
+	"license": "MIT",
+	"keywords": ["x", "twitter", "dm", "outreach", "sales", "prospecting", "mcp"],
+	"privacyPolicyUrl": "https://politereach.com/privacy/"
+}

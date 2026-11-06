@@ -1,0 +1,9 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+	"mcpServers": {
+		"politereach-x": {
+			"type": "streamable-http",
+			"url": "https://mcp-x.politereach.com/mcp"
+		}
+	}
+}

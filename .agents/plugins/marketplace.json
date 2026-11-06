@@ -1,0 +1,20 @@
+{
+	"name": "politereach-x",
+	"interface": {
+		"displayName": "PoliteReach for X"
+	},
+	"plugins": [
+		{
+			"name": "politereach-x",
+			"source": {
+				"source": "local",
+				"path": "./"
+			},
+			"policy": {
+				"installation": "AVAILABLE",
+				"authentication": "ON_INSTALL"
+			},
+			"category": "Productivity"
+		}
+	]
+}

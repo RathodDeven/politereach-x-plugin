@@ -1,0 +1,17 @@
+{
+	"name": "politereach-x",
+	"description": "The PoliteReach for X plugin for Claude: X (Twitter) DM outreach on your own accounts, with Claude as the brain and PoliteReach as the hands.",
+	"owner": {
+		"name": "PoliteReach",
+		"url": "https://politereach.com"
+	},
+	"plugins": [
+		{
+			"name": "politereach-x",
+			"source": "./",
+			"description": "X (Twitter) DM outreach on your own accounts: prospect research, staged DM sequences, reply triage, booked-call follow-up and scheduled tweets.",
+			"category": "sales",
+			"tags": ["x", "twitter", "dm", "outreach"]
+		}
+	]
+}

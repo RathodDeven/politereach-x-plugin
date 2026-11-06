@@ -1,0 +1,30 @@
+{
+	"$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+	"name": "com.politereach/x-outreach",
+	"title": "PoliteReach for X",
+	"description": "X (Twitter) DM outreach from your own accounts: paced DM sequences, reply checks, scheduled tweets.",
+	"version": "0.1.0",
+	"websiteUrl": "https://politereach.com",
+	"repository": {
+		"url": "https://github.com/RathodDeven/politereach-x-plugin",
+		"source": "github"
+	},
+	"icons": [
+		{
+			"src": "https://politereach.com/icon.svg",
+			"mimeType": "image/svg+xml",
+			"sizes": ["any"]
+		},
+		{
+			"src": "https://politereach.com/apple-icon.png",
+			"mimeType": "image/png",
+			"sizes": ["180x180"]
+		}
+	],
+	"remotes": [
+		{
+			"type": "streamable-http",
+			"url": "https://mcp-x.politereach.com/mcp"
+		}
+	]
+}

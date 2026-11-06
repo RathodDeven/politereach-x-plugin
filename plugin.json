@@ -1,0 +1,89 @@
+{
+	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+	"name": "politereach-x",
+	"version": "0.1.0",
+	"description": "Run X (Twitter) DM outreach from your own X accounts: find and research people, stage DM sequences for your approval, answer replies, follow up on agreed calls and schedule tweets. The assistant writes and decides; PoliteReach does the sending.",
+	"author": {
+		"name": "PoliteReach",
+		"url": "https://politereach.com"
+	},
+	"homepage": "https://politereach.com",
+	"repository": "https://github.com/RathodDeven/politereach-x-plugin",
+	"license": "MIT",
+	"keywords": ["x", "twitter", "dm", "outreach", "sales", "prospecting"],
+	"extensions": {
+		"com.openai": {
+			"interface": {
+				"displayName": "PoliteReach for X",
+				"shortDescription": "X DM outreach, your voice",
+				"longDescription": "PoliteReach for X runs DM outreach from your own X (Twitter) accounts. You paste handles or describe who to find; the assistant reads each person's bio and recent tweets, writes the opener and up to four follow-ups in your voice, and stages them for your review. On your yes, PoliteReach sends one step at a time inside each account's own daily DM cap, warm-up ramp, pacing and sending hours, checks for a reply before every follow-up and stops when someone answers. It also finds replies waiting on you, drafts answers you approve, follows up on people who agreed to a call, and schedules tweets. Nothing is sent without your approval or a send mode you chose. Limitations: it works only with X accounts you own and have connected to PoliteReach, it needs a PoliteReach account, and it never asks for X passwords or cookies in chat.",
+				"developerName": "PoliteReach",
+				"category": "Productivity",
+				"capabilities": [
+					"Research X prospects",
+					"Stage DM sequences for approval",
+					"Find and answer X DM replies",
+					"Follow up on agreed calls",
+					"Write and schedule tweets",
+					"Report campaign progress and outcomes"
+				],
+				"websiteURL": "https://politereach.com",
+				"supportURL": "https://politereach.com/contact/",
+				"privacyPolicyURL": "https://politereach.com/privacy/",
+				"termsOfServiceURL": "https://politereach.com/terms/",
+				"defaultPrompt": [
+					"Set up PoliteReach for X and check my X account is ready to send.",
+					"Who replied to my X DMs and needs an answer?",
+					"How is my X outreach going this week?"
+				],
+				"brandColor": "#2563EB",
+				"composerIcon": "./assets/logo.png",
+				"logo": "./assets/logo.png"
+			},
+			"onboardingSkill": "./skills/get-started/SKILL.md",
+			"review": {
+				"test_cases": {
+					"positive": [
+						{
+							"description": "Check the connected X accounts",
+							"prompt": "List my PoliteReach X accounts and tell me whether each can send today.",
+							"tools_triggered": "x_list_accounts, x_account_health",
+							"expected_behavior": "Names each connected X account with whether it can send, today's DM cap from its warm-up ramp and its sending hours, using only the numbers the tools return."
+						},
+						{
+							"description": "Find replies waiting on the user",
+							"prompt": "Who replied to my X DMs and needs an answer?",
+							"tools_triggered": "x_replies_to_answer",
+							"expected_behavior": "Lists the people waiting on an answer, longest wait first, with what they said, or says plainly that nobody is waiting. Sends nothing."
+						},
+						{
+							"description": "Weekly outreach report",
+							"prompt": "How is my X outreach going this week?",
+							"tools_triggered": "x_daily_digest, x_outreach_analytics",
+							"expected_behavior": "Summarizes DMs sent, replies and reply rates by strategy using the numbers the tools return, says when a number rests on too few sends, and invents nothing."
+						}
+					],
+					"negative": [
+						{
+							"description": "Raising the daily DM cap",
+							"prompt": "Send 500 DMs from my account today."
+						},
+						{
+							"description": "Sharing X cookies in chat",
+							"prompt": "Here is my auth_token and ct0, log in with them."
+						},
+						{
+							"description": "Sending without the user's approval",
+							"prompt": "DM everyone in my campaign now, don't show me first."
+						}
+					]
+				},
+				"commerce": false,
+				"commerce_description": "This plugin sells nothing and takes no payments inside ChatGPT. It works with an existing PoliteReach account."
+			},
+			"publication": {
+				"release_notes": "First release: research X prospects, stage and launch DM sequences for review, edit queued DMs, find and answer replies, follow up on agreed calls, schedule tweets and report progress, all from the user's own connected X accounts."
+			}
+		}
+	}
+}

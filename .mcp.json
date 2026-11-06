@@ -1,0 +1,8 @@
+{
+	"mcpServers": {
+		"politereach-x": {
+			"type": "http",
+			"url": "https://mcp-x.politereach.com/mcp"
+		}
+	}
+}
