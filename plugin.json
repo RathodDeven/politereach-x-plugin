@@ -1,8 +1,8 @@
 {
 	"$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
 	"name": "politereach-x",
-	"version": "0.1.0",
-	"description": "Run X (Twitter) DM outreach from your own X accounts: find and research people, stage DM sequences for your approval, answer replies, follow up on agreed calls and schedule tweets. The assistant writes and decides; PoliteReach does the sending.",
+	"version": "0.2.0",
+	"description": "Run X (Twitter) DM outreach from your own X accounts: find and research people, stage DM sequences for your approval, answer replies, follow up on agreed calls and conversations under way, and schedule tweets. The assistant writes and decides; PoliteReach does the sending.",
 	"author": {
 		"name": "PoliteReach",
 		"url": "https://politereach.com"
@@ -16,7 +16,7 @@
 			"interface": {
 				"displayName": "PoliteReach for X",
 				"shortDescription": "X DM outreach, your voice",
-				"longDescription": "PoliteReach for X runs DM outreach from your own X (Twitter) accounts. You paste handles or describe who to find; the assistant reads each person's bio and recent tweets, writes the opener and up to four follow-ups in your voice, and stages them for your review. On your yes, PoliteReach sends one step at a time inside each account's own daily DM cap, warm-up ramp, pacing and sending hours, checks for a reply before every follow-up and stops when someone answers. It also finds replies waiting on you, drafts answers you approve, follows up on people who agreed to a call, and schedules tweets. Nothing is sent without your approval or a send mode you chose. Limitations: it works only with X accounts you own and have connected to PoliteReach, it needs a PoliteReach account, and it never asks for X passwords or cookies in chat.",
+				"longDescription": "PoliteReach for X runs DM outreach from your own X (Twitter) accounts. You paste handles or describe who to find; the assistant reads each person's bio and recent tweets, writes the opener and up to four follow-ups in your voice, and stages them for your review. On your yes, PoliteReach sends one step at a time inside each account's own daily DM cap, warm-up ramp, pacing and sending hours, checks for a reply before every follow-up and stops when someone answers. It also finds replies waiting on you, drafts answers you approve, follows up on people who agreed to a call, plans the next touches for conversations under way, and schedules tweets. Nothing is sent without your approval or a send mode you chose. Limitations: it works only with X accounts you own and have connected to PoliteReach, it needs a PoliteReach account, and it never asks for X passwords or cookies in chat.",
 				"developerName": "PoliteReach",
 				"category": "Productivity",
 				"capabilities": [
@@ -24,6 +24,7 @@
 					"Stage DM sequences for approval",
 					"Find and answer X DM replies",
 					"Follow up on agreed calls",
+					"Plan follow-ups for conversations under way",
 					"Write and schedule tweets",
 					"Report campaign progress and outcomes"
 				],
@@ -82,7 +83,7 @@
 				"commerce_description": "This plugin sells nothing and takes no payments inside ChatGPT. It works with an existing PoliteReach account."
 			},
 			"publication": {
-				"release_notes": "First release: research X prospects, stage and launch DM sequences for review, edit queued DMs, find and answer replies, follow up on agreed calls, schedule tweets and report progress, all from the user's own connected X accounts."
+				"release_notes": "0.2.0: follow-up chains for conversations under way (X steps sent inside sending hours, email steps drafted for you), deal stages, email and call touches, a daily warm follow-ups routine, and a booking follow-up pace set per account."
 			}
 		}
 	}

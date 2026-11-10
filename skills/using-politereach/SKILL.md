@@ -1,6 +1,6 @@
 ---
 name: using-politereach
-description: X (Twitter) overview of PoliteReach for X, the X DM outreach connector. Says what must be connected for each job (the PoliteReach for X connector, an X account connected by cookie import, lookup credits, a calendar for bookings, scheduled tasks for routines), which skill handles which job, and what every x_* tool does with its safety rule. Use when the user asks what PoliteReach for X can do, how to use it, what they need to connect or set up, which tool or skill to use, why something needs a calendar or credits, or makes any PoliteReach X request that no other skill in this plugin covers.
+description: X (Twitter) overview of PoliteReach for X, the X DM outreach connector. Says what must be connected for each job (the PoliteReach for X connector, an X account connected by cookie import, lookup credits, a calendar for bookings, an email connector for email follow-ups, scheduled tasks for routines), which skill handles which job, and what every x_* tool does with its safety rule. Use when the user asks what PoliteReach for X can do, how to use it, what they need to connect or set up, which tool or skill to use, why something needs a calendar or credits, or makes any PoliteReach X request that no other skill in this plugin covers.
 ---
 
 # Using PoliteReach for X
@@ -15,10 +15,11 @@ PoliteReach for X sends DM outreach from the user's OWN X accounts. You (the ass
 | Anything that touches X | At least one X account, connected and checked with `x_verify_account` | Cookie import is the default: the user opens https://app-x.politereach.com/accounts/login, picks Import cookies and pastes the Cookie-Editor JSON export of x.com there. The live browser sign-in on that page is the fallback. Signed out later: `x_login_link` |
 | Research and sourcing (`x_prospect_context`, `x_contact_dossier`, `x_enrich_handles`, `x_source_prospects`) | Lookup credits left this month (`x_enrichment_status`) | Out of credits: write from what is stored, or skip the person. Credits, never dollars |
 | Booking check (who booked), and the nudges that depend on it | A calendar connector in the SAME app: Google Calendar, or Microsoft 365 / Outlook (a Calendly or Cal.com connector that lists bookings also works), its list-events and get-event tools allowed | Tell the user to connect their calendar in the app's connector settings. Until then, record who agreed but send no nudges. Never guess |
+| Warm follow-ups (chains, deal stages, the warm queue) | Nothing beyond the connector. An email connector in the same app (Gmail, Outlook) only for email steps | No email connector: email steps come to the user as text to send themselves, then `x_log_touch`. Never suggest one to a user who follows up on X only |
 | Routines that run on their own | The app's scheduled-tasks feature (claude.ai and Cowork: **Scheduled**; Claude Code: `/schedule`; ChatGPT: tasks), with the tools set to always allow | Run the routine by hand when the user asks |
 | Writing in the user's voice | The user's own outreach skill, "(company)-politereach-x-skill" | The `outreach-skill-builder` skill |
 
-PoliteReach itself never connects to a calendar or a mailbox. You read those through the user's own connectors and send PoliteReach only what is needed (attendee name, email, event id, start time, description).
+PoliteReach itself never connects to a calendar or a mailbox, and never sends email. You read and send those through the user's own connectors and tell PoliteReach only what is needed (attendee name, email, event id, start time, description; an email touch with `x_log_touch`).
 
 ## Which skill for which job
 
@@ -26,8 +27,9 @@ PoliteReach itself never connects to a calendar or a mailbox. You read those thr
 - Build the user's voice, ICPs and offers: `outreach-skill-builder`.
 - Reach out to people (handles, a source, warm leads, a second attempt): `start-outreach`.
 - Keep a running campaign fed from the Prospects pool: `keep-outreach-going`.
-- Replies waiting on the user, outcomes, a one-time follow-up for a warm thread: `answer-replies`.
-- Who agreed to a call, who booked, nudges: `book-agreed-calls`.
+- Replies waiting on the user, outcomes, the next touches for one warm thread: `answer-replies`.
+- Conversations under way after a reply, a call or a proposal: follow-up chains, deal stages, email and call touches, the daily warm queue: `keep-warm-conversations`.
+- Who agreed to a call, who booked, nudges, the booking pace, how a call went: `book-agreed-calls`.
 - Tweets now or later, a content calendar: `schedule-posts`.
 - How things are going, warm leads, credits, do-not-contact: `pipeline-check`.
 - What goes out soon, fixing queued wording, pausing a campaign: `queued-messages`.
@@ -45,7 +47,7 @@ Tools name an account in different ways, and a parameter a tool does not take is
 "Preview until" a flag means the call is a dry run until that flag is true.
 
 **Setup**
-- `x_setup_guide`: the same setup and routine instructions these skills carry, served by the connector, so an assistant without the plugin can follow them too. No `step` = the whole sequence; `account`, `outreach_skill`, `start_outreach`, `replies`, `follow_up`, `outreach`, `bookings`, `posts`, `morning_check` = one part.
+- `x_setup_guide`: the same setup and routine instructions these skills carry, served by the connector, so an assistant without the plugin can follow them too. No `step` = the whole sequence; `account`, `outreach_skill`, `start_outreach`, `replies`, `follow_up`, `outreach`, `bookings`, `posts`, `morning_check`, `warm` = one part.
 
 **Accounts and health**
 - `x_list_accounts`: every account with label, status, default flag, passcode set, and `verified` (null = never read, not "no"). Start here.
@@ -90,8 +92,8 @@ Tools name an account in different ways, and a parameter a tool does not take is
 - `x_stop_contact`: end a person's live sequences (`confirmStop`); `alsoSuppress: true` puts them on the do-not-contact list too.
 
 **Sending**
-- `x_send_reply`: answer one or many people (`replies`), each from the account holding the thread. Preview until `confirmSend`. Returns job ids at once; a job id means queued, never send twice. Booking nudges and closes go only through here, with `bookingNudge` or `bookingClose` and `calendarChecked: true`.
-- `x_send_dm_now`: one DM that holds the call open on a browser send. Only on the user's explicit request for one person; never in a routine. Preview until `confirmSend`.
+- `x_send_reply`: answer one or many people (`replies`), each from the account holding the thread. Preview until `confirmSend`. Returns job ids at once; a job id means queued, never send twice. Booking nudges and closes go only through here, with `bookingNudge` or `bookingClose` and `calendarChecked: true`. The same words to the same person within 10 minutes are refused (already sent or still queued): read `x_job_result`, never resend; `force: true` skips only that check, and only when the user explicitly wants the same words sent twice.
+- `x_send_dm_now`: one DM that holds the call open on a browser send. Only on the user's explicit request for one person; never in a routine. Preview until `confirmSend`. Refuses a repeat of the same words within 10 minutes, like `x_send_reply`, with the same `force`.
 - `x_check_dm_availability`: whether ONE handle can be DMed. Costs the browser slot: never loop it.
 
 **Conversations and verdicts**
@@ -100,7 +102,7 @@ Tools name an account in different ways, and a parameter a tool does not take is
 - `x_conversation_history`: the stored thread, instant. Empty means never read, not "they said nothing".
 - `x_read_conversation`: one thread live, tens of seconds. `x_read_conversations`: up to 25 in ONE job; never loop the single one.
 - `x_check_replies`: re-read finished threads now. Only on a person's "check now": the hourly sweep is built in.
-- `x_contact_dossier`: everything stored about one person, looked up when stale.
+- `x_contact_dossier`: everything stored about one person, looked up when stale. Its `warm` block holds their email, deal stage, touches, active chains and whether the warm queue lists them now.
 - `x_set_outcome`: the verdict: `won`, `meeting_booked`, `interested`, `not_interested`. A booked call or a demo is never `won`. A verdict cancels every pending step to that person.
 - `x_mark_reply_handled`: close replies dealt with (`confirmMark`), with or without an outcome.
 - `x_snooze_reply`: park a thread until a date. Nothing is sent when it ends.
@@ -108,12 +110,22 @@ Tools name an account in different ways, and a parameter a tool does not take is
 - `x_outcome_summary`: how conversations ended; `undecided` = not judged yet, never a result.
 
 **Bookings** (you read the calendar; PoliteReach stores state and enforces the limits)
-- `x_booking_due`: people recorded `interested`, by stage: `nudge_due`, `close_due`, `they_wrote`, `waiting`, `done`. Agreed, then ONE nudge, then a close, then done.
+- `x_booking_due`: people recorded `interested`, by stage: `nudge_due`, `close_due`, `they_wrote`, `waiting`, `done`, on the pace of the account holding each thread (`scheduleDays` per row; default [3, 4] = one nudge, then the close). Never offers a message past the schedule. `they_wrote` includes an email or call they made, logged with `x_log_touch`. `nudgeAfterDays` and `closeAfterDays` are refused.
 - `x_match_contacts`: calendar attendees to contacts. Mark only a `match`; skip `ignored`. Never pass `createdAt`.
 - `x_ignore_calendar_event`: the user says a booking is not from X (`eventId` or `email`). Only on their word.
 - `x_mark_booked`: a call is on the calendar (`calendarEventId`, `meetingStart`); same event, new time is a move.
 - `x_mark_booking_cancelled`: the event is gone or cancelled.
 - `x_bookings`: booked calls, to compare with the calendar.
+- `x_set_booking_settings`: the account's booking pace (`nudgeScheduleDays`, default [3, 4]: days after each message of ours, the last one the close; 1-4 numbers, each 1-30, never shrinking). A broken schedule is refused, never trimmed. The booking link lives in the user's outreach skill, never here.
+
+**Warm follow-up** (you write every word; PoliteReach holds the plan, the timing and the stop rules). Not the same as warm leads: these people are already in conversation.
+- `x_create_followup_chain`: the next 1-4 touches for ONE person from ONE account (`steps`: `delayDays` 1-60 after our previous message on any channel, strictly growing; `channel` `x` or `email`; `text`; `mode` `send` or `draft`). Email is always a draft: PoliteReach never sends email. Preview until `confirm`. The account is the one holding their thread; name it only for someone none of the accounts has DMed. One active chain per person per account; `replaceExisting` replaces it. Send steps go inside the account's sending hours, daily DM cap and pacing. Stops by itself when they write on any channel, book a call, get a final verdict (`won`, `not_interested`), are suppressed, a step arrives only in part, their handle changes hands, or a send fails.
+- `x_list_chains`: chains by person or account, each step with its status; `status` `active` (default), `completed`, `canceled` or `all`. Read-only.
+- `x_cancel_chain`: stop one (`chainId`, or `handle`) with a short `reason` (echoed, not stored).
+- `x_set_stage`: where the deal stands, for `handles`: `agreed`, `booked`, `no_show`, `call_done` (with `note`, `nextStep`, `owner`, `dueDate`), `proposal_sent`, `invited_not_activated`, `trial`, `paid`, `closed`, or null to clear. Not a verdict, and nothing sends because of it.
+- `x_set_contact_email`: save (or clear) a person's email address.
+- `x_log_touch`: an email, WhatsApp, call or other touch off X (`direction` `in` or `out`, `at`, `note`). An inbound one stops their chains and live campaign sequences and counts as "they wrote" for bookings, without marking them replied on X. An outbound one restarts the chain and booking waits.
+- `x_warm_due`: the people in conversation whose next touch is due, most overdue first, each with `reasons` (`chain_step_due`, `next_step_date`, `they_wrote_last`, `quiet`), the due step's text (`draftedStep`; `sendsItself` = PoliteReach sends it, never by hand), last touch per channel and `unansweredXRun` (X has no read receipts: never call anyone unread). Read `truncated`; unreadable is not empty. Not `x_warm_leads`.
 
 **Tweets**
 - `x_schedule_tweet`: one tweet at a chosen time on the exact account (`sessionId`), `confirmSchedule`. `accountHold` / `sendHold` in the reply = it would not post now: hand over `fixUrl`, never move it to another account.
@@ -139,7 +151,7 @@ Tools name an account in different ways, and a parameter a tool does not take is
 - `x_suppress_handles`: add people. Preview until `confirmSuppress`. Refused at every import and send.
 - `x_list_suppressed`: read the list. `x_unsuppress_handle`: remove ONE person, only on the user's explicit word (`confirmUnsuppress`).
 
-Operator only, not for normal use: `x_host_health`, `x_selector_canary`, `x_session_cookies`, `x_hold_sending`, `x_set_workspace_billing`, `x_set_default_pricing_tier`, `x_set_workspace_complimentary`, `x_set_account_complimentary`, `x_set_user_default_proxy`.
+Operator only, not for normal use: `x_trial_watch` (admin; read-only: seats ending or ended, accounts X blocked, accounts with no launched campaign after 7 days, people invited who never signed in), `x_host_health`, `x_selector_canary`, `x_session_cookies`, `x_hold_sending`, `x_set_workspace_billing`, `x_set_default_pricing_tier`, `x_set_workspace_complimentary`, `x_set_account_complimentary`, `x_set_user_default_proxy`.
 
 ## Ground rules, everywhere
 

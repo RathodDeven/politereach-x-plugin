@@ -1,6 +1,6 @@
 ---
 name: answer-replies
-description: X (Twitter) DM replies through PoliteReach for X. Finds every reply waiting on the user across their X accounts, drafts answers in their voice, sends the approved ones from the account holding each thread, and records how each conversation went. Use when the user asks who replied on X, what needs an answer, to clear or triage their X DMs, to answer replies, to record outcomes, to book a one-time follow-up for a warm thread, or to put reply handling on a schedule.
+description: X (Twitter) DM replies through PoliteReach for X. Finds every reply waiting on the user across their X accounts, drafts answers in their voice, sends the approved ones from the account holding each thread, and records how each conversation went. Use when the user asks who replied on X, what needs an answer, to clear or triage their X DMs, to answer replies, to record outcomes, to plan the next touches for a warm thread, or to put reply handling on a schedule.
 ---
 
 # Answer X DM replies
@@ -34,7 +34,7 @@ Work the whole queue in batches. Every tool here takes a list, so a queue is a h
 
 ## 3. Send only what the user approved
 
-Show every draft. On a yes: ONE `x_send_reply` call with `replies: [{handle, message}, ...]` and `confirmSend: true`. Each reply goes from the account holding that thread (`sendsFrom`). One refused row queues nothing: drop or fix it and call again. A job id means queued, not failed: never call it again for the same person. Outcomes only when asked, with ONE `x_job_result` call passing `jobIds`. Never `x_send_dm_now` here: it holds the call open on a browser send.
+Show every draft. On a yes: ONE `x_send_reply` call with `replies: [{handle, message}, ...]` and `confirmSend: true`. Each reply goes from the account holding that thread (`sendsFrom`). One refused row queues nothing: drop or fix it and call again. A job id means queued, not failed: never call it again for the same person. A refusal naming the duplicate-send guard means those words already went or are queued: relay it, never resend or force it. Outcomes only when asked, with ONE `x_job_result` call passing `jobIds`. Never `x_send_dm_now` here: it holds the call open on a browser send.
 
 ## 4. Record a verdict for every thread read
 
@@ -52,13 +52,15 @@ Other marks:
 - "Try again in (month)": `x_snooze_reply` with `until`. Nothing is sent when it ends.
 - A reply the automatic check missed (the user saw it on x.com): `x_mark_replied`, preview first, then `confirmMark: true`. It stops their sequence.
 - "Remove me": on the user's yes, `x_suppress_handles` (preview, then `confirmSuppress: true`), or `x_stop_contact` with `alsoSuppress: true` to stop and suppress at once.
+- Where the deal now stands (a call done, a proposal out, a trial started): `x_set_stage` with `handles` and the stage; `call_done` takes `note`, `nextStep`, `owner` and `dueDate`. Then offer that stage's chain.
+- The conversation moved to email, WhatsApp or a call: `x_set_contact_email` when they give an address, and `x_log_touch` for each touch off X (`direction: "in"` for theirs stops their chains and campaign follow-ups).
 - Flagged threads: mark nothing.
 
 A closed conversation comes back by itself if they write again.
 
 ## Warm threads: book the next touch
 
-A thread with no sequence left (they replied, a call happened, a proposal went out, you wait on them) has nothing scheduled, so it gets forgotten. When the next move is to wait, offer a one-time scheduled follow-up for that person, about 7 days out unless the user names a date. Follow `references/follow-up-task.md`.
+A thread with no sequence left (they replied, a call happened, a proposal went out, you wait on them) has nothing scheduled, so it gets forgotten. When the next move is to wait, offer a follow-up chain for that person: the next 1-4 touches, written now, sent or drafted when due, stopped by itself the moment they write. The `keep-warm-conversations` skill has the rules (`x_create_followup_chain`, preview, then the user's yes). Only when the user wants the follow-up written on the day, from the thread as it stands then, offer a one-time scheduled task instead: `references/follow-up-task.md`.
 
 ## Message rules
 

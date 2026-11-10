@@ -64,7 +64,7 @@ Then install **PoliteReach for X** from the plugin list and sign in. Codex reads
 
 **What the skills do there.** The skills work the same way once the tools are connected. Two notes:
 
-- The routine skills (`answer-replies`, `keep-outreach-going`, `book-agreed-calls`, `schedule-posts`, and the morning check in `get-started`) ask your app to create a recurring scheduled task. If your app cannot schedule tasks, run them by hand.
+- The routine skills (`answer-replies`, `keep-outreach-going`, `book-agreed-calls`, `schedule-posts`, `keep-warm-conversations`, and the morning check in `get-started`) ask your app to create a recurring scheduled task. If your app cannot schedule tasks, run them by hand.
 - `book-agreed-calls` needs a calendar connector in the same app (Google Calendar, or Microsoft 365 / Outlook calendar) with its list-events and get-event tools allowed. Without it, it records who agreed but cannot tell who booked, so it sends no nudges.
 
 ## Skills
@@ -77,7 +77,8 @@ Then install **PoliteReach for X** from the plugin list and sign in. Codex reads
 | `start-outreach` | From handles, a source, warm leads or a second attempt: researches each person, writes the whole DM sequence, stages it for your review and launches on your yes. |
 | `keep-outreach-going` | Keeps a running campaign fed from your Prospects pool, a day's cap at a time. Can run on a schedule. |
 | `answer-replies` | Finds every reply waiting on you, drafts answers, sends the ones you approve, and records how each conversation went. Can run on a schedule. |
-| `book-agreed-calls` | Matches bookings on your calendar to the people who agreed to a call, and sends one nudge and one polite close. Can run on a schedule. |
+| `book-agreed-calls` | Matches bookings on your calendar to the people who agreed to a call, follows up on the pace you set (nudges, then one polite close), and after the call asks how it went. Can run on a schedule. |
+| `keep-warm-conversations` | Plans the next few touches for people already in conversation (agreed, no-show, call done, proposal sent), records where each deal stands, logs email, WhatsApp and call touches, and works the daily list of who is due. Can run on a schedule. |
 | `schedule-posts` | Writes tweets in your voice and schedules them on your accounts. Can run on a schedule. |
 | `pipeline-check` | Daily digest, campaign progress, outcomes, the follow funnel, warm leads, credits and your do-not-contact list. |
 | `queued-messages` | Shows what goes out soon and fixes or holds queued wording before it is sent. |
@@ -98,6 +99,7 @@ This plugin contains only instructions and a connector address. It runs no code 
 
 - X handles of people you ask about, and the DMs and tweets you approve.
 - Your decisions on replies (outcomes, notes).
+- For `keep-warm-conversations` only: follow-up steps you approve, deal stages and notes, a person's email address when you save one, and a one-line note of each email, WhatsApp or call touch you log. PoliteReach never connects to your mailbox and never sends email.
 - For `book-agreed-calls` only: the name, email, event id, start time and description of external attendees on your calendar booking events, read by Claude through your own calendar connector, so PoliteReach can match them to the people you messaged. PoliteReach never connects to your calendar.
 
 Profile and tweet lookups and prospect sourcing use lookup credits from your workspace's monthly allowance.

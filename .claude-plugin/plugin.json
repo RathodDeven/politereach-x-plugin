@@ -1,8 +1,8 @@
 {
 	"name": "politereach-x",
 	"displayName": "PoliteReach for X",
-	"version": "0.1.0",
-	"description": "Run X (Twitter) DM outreach from your own X accounts with Claude: find and research people, stage DM sequences for your approval, answer replies, follow up on agreed calls and schedule tweets. Claude writes and decides; PoliteReach does the sending.",
+	"version": "0.2.0",
+	"description": "Run X (Twitter) DM outreach from your own X accounts with Claude: find and research people, stage DM sequences for your approval, answer replies, follow up on agreed calls and conversations under way, and schedule tweets. Claude writes and decides; PoliteReach does the sending.",
 	"author": {
 		"name": "PoliteReach",
 		"url": "https://politereach.com"

@@ -56,6 +56,7 @@ The live browser sign-in on the same page is the fallback: X refuses a sign-in f
 - Default sender: `x_set_default_account`.
 - Daily DM cap, pacing, warm-up (`x_set_sending_limits`, `x_set_warmup`, `x_restart_warmup`): only on the user's explicit request, after saying the risk out loud: faster sending is how X restricts an account. Never propose raising a limit. `x_restart_warmup` previews until `confirmRestart`.
 - Follow and like budgets: `x_set_engagement_budgets`.
+- Booking follow-up pace: `x_set_booking_settings` with `nudgeScheduleDays` (default [3, 4]: days after each message of ours, the last one the close, so one nudge after 3 days and the close 4 days after it).
 
 ## When something looks stuck
 
@@ -69,4 +70,5 @@ The live browser sign-in on the same page is the fallback: X refuses a sign-in f
 
 1. Build the user's outreach skill: the `outreach-skill-builder` skill.
 2. Start outreach to people: the `start-outreach` skill.
-3. What else PoliteReach for X does, and what to connect for it (a calendar for bookings, scheduled tasks for routines): the `using-politereach` skill.
+3. Keep conversations moving after a reply, a call or a proposal: the `keep-warm-conversations` skill.
+4. What else PoliteReach for X does, and what to connect for it (a calendar for bookings, scheduled tasks for routines): the `using-politereach` skill.

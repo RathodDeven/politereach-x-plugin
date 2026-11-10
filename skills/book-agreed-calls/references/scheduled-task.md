@@ -20,13 +20,14 @@ Create nothing until the user has answered part 1.
 Ask in one message, numbered, defaults in brackets, so the user can answer "defaults". If their outreach skill already answers one, say what you took from it. Ask their timezone if unknown.
 
 1. Which PoliteReach X accounts should it cover? Use the labels from `x_list_accounts`; the task keeps each one's id with its label. [all of them]
-2. Send the nudge and the close itself, or draft them for you? Send: one nudge, then one polite close, each only when PoliteReach says it is due. [draft]
-3. Which calendar connector and calendar do your bookings land on? [the connected one, your primary calendar]
-4. Your booking link, if your skill does not have it.
-5. Anything a nudge must never say. [never propose a time, never pitch]
-6. The email domain of your own team, so internal meetings are ignored.
-7. Anyone who books on your calendar but never through X (their email). Mark each with `x_ignore_calendar_event` now, so every run skips them. [none]
-8. When should it run, in your timezone? [every day at 11:20, 15:20 and 19:20]
+2. Send the nudges and the close itself, or draft them for you? Send: each one goes only when PoliteReach says it is due. [draft]
+3. How fast to follow up after the link? Each number is days after your previous message; the last one is the close. A change is saved with `x_set_booking_settings` (`nudgeScheduleDays`) on each account. [3, 4: one nudge after 3 days, the close 4 days after it]
+4. Which calendar connector and calendar do your bookings land on? [the one in your outreach skill, your primary calendar]
+5. Your booking link, if your skill does not have it.
+6. Anything a nudge must never say. [never propose a time, never pitch]
+7. The email domain of your own team, so internal meetings are ignored.
+8. Anyone who books on your calendar but never through X (their email). Mark each with `x_ignore_calendar_event` now, so every run skips them. [none]
+9. When should it run, in your timezone? [every day at 11:20, 15:20 and 19:20]
 
 ## Part 2: create the task
 
@@ -55,7 +56,7 @@ SETUP
 STEP 1: FIND BOOKINGS
 On the CONFIG calendar, list events from 7 days ago to 30 days ahead. Keep only booking events (cal.com, Calendly, or my booking link in the organiser, description, location or title). Ignore meetings with only my own team.
 Pass every external attendee (name, email, eventId, startsAt and the full description) to x_match_contacts in one call.
-- match: x_mark_booked with its handle, calendarEventId and meetingStart.
+- match: x_mark_booked with its handle, calendarEventId and meetingStart. If the attendee's email is not on my team's domain, x_set_contact_email with it.
 - ambiguous: do not mark. List under NEEDS CHECK with the candidates.
 - none: ignore.
 - ignored: marked not from X earlier. Skip; never list it.
@@ -66,16 +67,23 @@ x_bookings with from set to 7 days ago. Look up each calendarEventId on the cale
 - Start time changed: x_mark_booked with the same calendarEventId and the new time.
 
 STEP 3: NUDGE OR CLOSE
-x_booking_due with dueOnly true, and no nudgeAfterDays or closeAfterDays: the send guard always uses the default waits. Keep the rows whose accountId is a CONFIG account. For each row read the thread with x_conversation_history.
-- they_wrote: never a nudge. If the thread shows they booked, find the event and x_mark_booked. If they changed their mind, NEEDS CHECK. Otherwise leave it to my replies routine.
-- nudge_due: one line pointing back to what they said about the call, then my booking link on its own line. Never propose a time, never pitch.
+x_booking_due with dueOnly true, and no nudgeAfterDays or closeAfterDays (refused: each account's own pace from x_set_booking_settings is what both this list and the send guard read). Keep the rows whose accountId is a CONFIG account. If a follow-up chain is active for a person (x_list_chains, one call), leave them to it. For each row read the thread with x_conversation_history.
+- they_wrote: never a nudge. If the thread shows they booked, find the event and x_mark_booked. If they changed their mind, NEEDS CHECK. Otherwise leave it to my replies routine (an email or call they made is in my warm follow-ups).
+- nudge_due: one line pointing back to what they said about the call. If a message of ours after their last one already has my booking link (an earlier nudge), point to it ("can you grab a slot from the link above?") and never paste it again; otherwise my booking link on its own line. Never propose a time, never pitch.
 - close_due: one line, no link: "Should I close this off, or still want a slot this week?" in the tone of the thread.
 - waiting or done: nothing.
 Max 2 short lines, no em dashes, no exclamation marks, no emojis, no "just checking in". The link is plain: PoliteReach adds nothing to it.
 Right before sending, search the calendar again for each row by name and handle: anyone who booked since step 1 gets x_mark_booked and no message.
 Send with x_send_reply, confirmSend true, calendarChecked true: the nudges in one call with bookingNudge true, the closes in another with bookingClose true. Each goes from the account holding that thread. PoliteReach refuses any row that is not due: drop the refused rows and call again once with the rest, never retrying a refused person. A job id means queued: never send it again.
 
+STEP 4: AFTER THE CALL
+x_bookings with from set to 7 days ago and to set to now: calls whose start has passed. Skip anyone already at no_show, call_done or a later stage (x_contact_dossier shows it in its warm block).
+- Gone or cancelled on the calendar: step 2 handles it.
+- The calendar or booking tool marks them a no-show: x_set_stage no_show, source routine, a note naming where it was marked. Then write the no_show chain from my skill's references/stage-templates.md for this person (every word written now) under PROPOSED CHAINS.
+- Otherwise list the call under HOW DID IT GO with handle, name and time, so I can say no_show, or call_done with what was agreed, the next step, the owner and a date. Never guess a no-show or a call done.
+Never create a chain in this run: I approve each one in chat, and it is created there with x_create_followup_chain.
+
 If any tool returns a sign-in or blocked error, stop work on that account and report the x_login_link URL; never retry around it.
 
-REPORT: booked, cancelled or moved, then NUDGED and CLOSED (or DRAFTS), each message in a code block with the handle and the account holding the thread, then NEEDS CHECK. Nothing happened: "No booking actions." and no notification. Otherwise notify me once with the counts and one line per NEEDS CHECK item.
+REPORT: booked, cancelled or moved, then NUDGED and CLOSED (or DRAFTS), each message in a code block with the handle and the account holding the thread, then HOW DID IT GO, PROPOSED CHAINS, NEEDS CHECK. Nothing happened: "No booking actions." and no notification. Otherwise notify me once with the counts and one line per HOW DID IT GO and NEEDS CHECK item.
 ```
